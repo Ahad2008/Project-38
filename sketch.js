@@ -36,32 +36,31 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(600, 200);
+  createCanvas(600, 200, WEBGL);
 
   var message = "This is a message";
  console.log(message)
   
-  trex = createSprite(50,160,20,50);
+  trex = createSprite(-250,160,20,50);
   trex.addAnimation("running", trex_running);
   trex.addAnimation("collided", trex_collided);
   
   trex.scale = 0.5;
   
-  ground = createSprite(200,180,400,20);
+  ground = createSprite(-250,180,400,20);
   ground.addImage("ground",groundImage);
-  ground.x = ground.width /2;
   
-  gameOver = createSprite(300,100);
+  gameOver = createSprite(0,100);
   gameOver.addImage(gameOverImg);
   
-  restart = createSprite(300,140);
+  restart = createSprite(0,140);
   restart.addImage(restartImg);
   
  
   gameOver.scale = 0.5;
   restart.scale = 0.5;
   
-  invisibleGround = createSprite(200,190,400,10);
+  invisibleGround = createSprite(200,190,4000000000000000,10);
   invisibleGround.visible = false;
   
   //create Obstacle and Cloud Groups
@@ -72,6 +71,8 @@ function setup() {
   //trex.debug = true
   
   score = 0;
+
+  Camera = createCamera();
   
 }
 
@@ -79,13 +80,19 @@ function draw() {
   
   background(180);
   //displaying score
-  text("Score: "+ score, 500,50);
+  textSize(20);
+  text("Score: "+ score, 50,150);
   
   if(gameState === PLAY){
 
     gameOver.visible = false;
     restart.visible = false;
-    
+
+    Camera.x = trex.x;
+
+    //if (keyDown("down_Arrow")){
+    //Camera.move(0, 10, 0);
+    //}
     ground.velocityX = -(4 + 3* score/100)
     //scoring
     score = score + Math.round(getFrameRate()/60);
@@ -93,9 +100,9 @@ function draw() {
     if(score>0 && score%100 === 0){
        checkPointSound.play() 
     }
-    
-    if (ground.x < 0){
-      ground.x = ground.width/2;
+  
+    if (camera.x > 5){
+      ground.x = camera.x - 5;
     }
     
     //jump when the space key is pressed
@@ -114,7 +121,6 @@ function draw() {
     spawnObstacles();
     
     if(obstaclesGroup.isTouching(trex)){
-        //trex.velocityY = -12;
         jumpSound.play();
         gameState = END;
         dieSound.play()
@@ -204,7 +210,7 @@ function spawnClouds() {
     cloud.velocityX = -3;
     
      //assign lifetime to the variable
-    cloud.lifetime = 200;
+    cloud.lifetime = 300;
     
     //adjust the depth
     cloud.depth = trex.depth;
