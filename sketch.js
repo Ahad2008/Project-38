@@ -79,6 +79,11 @@ function setup() {
 function draw() {
   
   background(180);
+
+  Camera.x = trex.x;
+  Camera.y = trex.y;
+  gameOver.position.x = restart.position.x = camera.x-300
+
   //displaying score
   textSize(20);
   text("Score: "+ score, 50,150);
@@ -88,11 +93,9 @@ function draw() {
     gameOver.visible = false;
     restart.visible = false;
 
-    Camera.x = trex.x;
-
-    //if (keyDown("down_Arrow")){
-    //Camera.move(0, 10, 0);
-    //}
+    if (keyDown("down_Arrow")){
+    Camera.move(0, 10, 0);
+    }
     ground.velocityX = -(4 + 3* score/100)
     //scoring
     score = score + Math.round(getFrameRate()/60);
@@ -170,7 +173,7 @@ trex.changeAnimation("running", trex_running);
 
 function spawnObstacles(){
  if (frameCount % 60 === 0){
-   var obstacle = createSprite(600,165,10,40);
+   var obstacle = createSprite(camera.x+width/2,165,10,40);
    obstacle.velocityX = -(6 + score/100);
    
     //generate random obstacles
@@ -203,7 +206,7 @@ function spawnObstacles(){
 function spawnClouds() {
   //write code here to spawn the clouds
   if (frameCount % 60 === 0) {
-    var cloud = createSprite(600,120,40,10);
+    var cloud = createSprite(camera.x+width/2,100,10,40);
     cloud.y = Math.round(random(80,120));
     cloud.addImage(cloudImage);
     cloud.scale = 0.5;
